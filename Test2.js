@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { View, Text } from "react-native";
 
-export default class Test extends Component {
+export default class Test2 extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -10,7 +10,7 @@ export default class Test extends Component {
   render() {
     return (
       <View>
-        <Text> This will be pushed to Master Branch </Text>
+        <Text> This will be pushed only to Test Branch </Text>
       </View>
     );
   }
