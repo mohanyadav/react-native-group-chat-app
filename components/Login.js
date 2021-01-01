@@ -43,7 +43,7 @@ export default class Login extends Component {
 
         <TextInput
           label="Email Address"
-          mode="outlined"
+          mode="flat"
           placeholder="Email"
           value={this.state.email}
           onChangeText={(email) => {
