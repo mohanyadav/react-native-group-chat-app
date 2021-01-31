@@ -35,6 +35,8 @@ export default class Home extends Component {
       groupName: null,
       showLoader: false,
       groupData: null,
+      loading: false,
+      loading_dialog_text: "",
     };
   }
 
@@ -64,6 +66,7 @@ export default class Home extends Component {
   };
 
   _updateProfileURL = (downloadURL, uid) => {
+    this.setState({ loading_dialog_text: "Updating database..." });
     firebase
       .database()
       .ref("users/" + uid)
@@ -71,10 +74,12 @@ export default class Home extends Component {
         profile_url: downloadURL,
       })
       .then(() => {
+        this.setState({ loading: false });
         console.log("Finished updating database...");
       })
       .catch((error) => {
         alert(error.message);
+        this.setState({ loading: false });
       });
   };
 
@@ -96,6 +101,11 @@ export default class Home extends Component {
     let response = await fetch(fileURI);
     let blob = await response.blob();
 
+    this.setState({
+      loading: true,
+      loading_dialog_text: "Uploading Profile Picture...",
+    });
+
     // Upload Image
     imageRef
       .put(blob)
@@ -107,6 +117,7 @@ export default class Home extends Component {
       })
       .catch((error) => {
         alert(error.message);
+        this.setState({ loading: false });
       });
   };
 
@@ -176,6 +187,10 @@ export default class Home extends Component {
   };
 
   getAllGroupData = (uid) => {
+    this.setState({
+      loading: true,
+      loading_dialog_text: "Getting group data...",
+    });
     // Get all group data
     firebase
       .database()
@@ -195,6 +210,7 @@ export default class Home extends Component {
 
         this.setState({
           groupData: dataArray,
+          loading: false,
         });
       });
   };
@@ -255,6 +271,18 @@ export default class Home extends Component {
                 )}
               </Dialog.Actions>
             </Dialog>
+
+            <Dialog visible={this.state.loading} dismissable={false}>
+              <Dialog.Title>{this.state.loading_dialog_text}</Dialog.Title>
+              <Dialog.Content>
+                <ActivityIndicator
+                  size={60}
+                  animating={true}
+                  hidesWhenStopped={true}
+                  color="#6200EE"
+                />
+              </Dialog.Content>
+            </Dialog>
           </Portal>
 
           <Image
@@ -281,6 +309,10 @@ export default class Home extends Component {
             <Button
               mode="outlined"
               onPress={() => {
+                this.setState({
+                  loading: true,
+                  loading_dialog_text: "Logging out...",
+                });
                 firebase
                   .auth()
                   .signOut()
