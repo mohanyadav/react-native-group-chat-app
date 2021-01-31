@@ -1,6 +1,19 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Button, TextInput } from "react-native-paper";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  ActivityIndicator,
+} from "react-native";
+import {
+  Button,
+  TextInput,
+  Portal,
+  Dialog,
+  Provider as PaperProvider,
+  Provider,
+} from "react-native-paper";
 
 import * as firebase from "firebase";
 
@@ -10,11 +23,14 @@ export default class Login extends Component {
     this.state = {
       email: null,
       password: null,
+      loading: false,
     };
   }
 
   login = () => {
     const { email, password } = this.state;
+
+    this.setState({ loading: true });
 
     firebase
       .auth()
@@ -24,6 +40,7 @@ export default class Login extends Component {
       })
       .catch((error) => {
         alert(error.message);
+        this.setState({ loading: false });
       });
   };
 
@@ -38,59 +55,85 @@ export default class Login extends Component {
     });
 
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}> Login </Text>
+      <Provider>
+        <Portal>
+          <Dialog visible={this.state.loading} dismissable={false}>
+            <Dialog.Title>Logging in...</Dialog.Title>
+            <Dialog.Content>
+              <ActivityIndicator
+                size={60}
+                animating={true}
+                hidesWhenStopped={true}
+                color="#6200EE"
+              />
+            </Dialog.Content>
+          </Dialog>
+        </Portal>
 
-        <TextInput
-          label="Email Address"
-          mode="flat"
-          placeholder="Email"
-          value={this.state.email}
-          onChangeText={(email) => {
-            this.setState({ email });
-          }}
-          style={styles.textInput}
-        />
-        <TextInput
-          style={styles.textInput}
-          placeholder="Password"
-          value={this.state.password}
-          onChangeText={(password) => {
-            this.setState({ password });
-          }}
-          secureTextEntry={true}
-        />
+        <SafeAreaView style={styles.container}>
+          <Text style={styles.title}> Login </Text>
 
-        <Button
-          mode="contained"
-          onPress={() => {
-            this.login();
-          }}
-        >
-          Login Now
-        </Button>
+          <TextInput
+            label="Email Address"
+            mode="flat"
+            placeholder="Email"
+            value={this.state.email}
+            onChangeText={(email) => {
+              this.setState({ email });
+            }}
+            style={styles.textInput}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Password"
+            value={this.state.password}
+            onChangeText={(password) => {
+              this.setState({ password });
+            }}
+            secureTextEntry={true}
+          />
 
-        <Button
-          mode="text"
-          onPress={() => {
-            this.props.navigation.push("Register");
-          }}
-          color="#000"
-        >
-          Create an account
-        </Button>
-      
-        {/* Forgot Password Button */}
-        <Button
-          mode="text"
-          onPress={() => {
-            this.props.navigation.push("ForgotPassword");
-          }}
-          color="#aaa"
-        >
-          Forgot Password
-        </Button>
-      </View>
+          <Button
+            mode="contained"
+            onPress={() => {
+              this.login();
+            }}
+          >
+            Login Now
+          </Button>
+
+          <Button
+            mode="text"
+            onPress={() => {
+              this.props.navigation.push("Register");
+            }}
+            color="#000"
+          >
+            Create an account
+          </Button>
+
+          {/* Forgot Password Button */}
+          <Button
+            mode="text"
+            onPress={() => {
+              this.props.navigation.push("ForgotPassword");
+            }}
+            color="#aaa"
+          >
+            Forgot Password
+          </Button>
+
+          <Button
+            mode="text"
+            onPress={() => {
+              this.setState({ loading: true });
+            }}
+            color="#aaa"
+          >
+            Show Dialog
+          </Button>
+        </SafeAreaView>
+      </Provider>
     );
   }
 }
