@@ -12,6 +12,7 @@ import { firebaseConfig } from "./logic/config";
 
 import Home from "./components/Home";
 import Login from "./components/Login";
+import ForgotPassword from "./components/ForgotPassword";
 import Loading from "./components/Loading";
 import Register from "./components/Register";
 import ChatDetail from "./components/ChatDetail";
@@ -78,6 +79,7 @@ export default function App() {
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="ChatDetail" component={ChatDetail} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
       </Stack.Navigator>
     </NavigationContainer>
   );

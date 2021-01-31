@@ -1,26 +1,25 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { Button, TextInput } from "react-native-paper";
+import { Button, TextInput, FAB, Colors } from "react-native-paper";
 
 import * as firebase from "firebase";
 
-export default class Login extends Component {
+export default class ForgotPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
       email: null,
-      password: null,
     };
   }
 
-  login = () => {
-    const { email, password } = this.state;
+  sendResetLink = () => {
+    const { email } = this.state;
 
     firebase
       .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then((user) => {
-        console.log(user.user.uid);
+      .sendPasswordResetEmail(email)
+      .then(() => {
+        alert("Please check your email for resetting the password");
       })
       .catch((error) => {
         alert(error.message);
@@ -39,7 +38,13 @@ export default class Login extends Component {
 
     return (
       <View style={styles.container}>
-        <Text style={styles.title}> Login </Text>
+        <FAB
+          style={styles.backBtn}
+          icon="arrow-left"
+          onPress={() => this.props.navigation.goBack()}
+        ></FAB>
+
+        <Text style={styles.title}> Retrieve Password </Text>
 
         <TextInput
           label="Email Address"
@@ -51,45 +56,16 @@ export default class Login extends Component {
           }}
           style={styles.textInput}
         />
-        <TextInput
-          style={styles.textInput}
-          placeholder="Password"
-          value={this.state.password}
-          onChangeText={(password) => {
-            this.setState({ password });
-          }}
-          secureTextEntry={true}
-        />
-
+    
         <Button
           mode="contained"
           onPress={() => {
-            this.login();
+            this.sendResetLink();
           }}
         >
-          Login Now
+          Send Reset Link
         </Button>
 
-        <Button
-          mode="text"
-          onPress={() => {
-            this.props.navigation.push("Register");
-          }}
-          color="#000"
-        >
-          Create an account
-        </Button>
-      
-        {/* Forgot Password Button */}
-        <Button
-          mode="text"
-          onPress={() => {
-            this.props.navigation.push("ForgotPassword");
-          }}
-          color="#aaa"
-        >
-          Forgot Password
-        </Button>
       </View>
     );
   }
@@ -110,5 +86,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "700",
     marginBottom: 20,
+  },
+  backBtn: {
+    width: 60,
+    height: 60,
+    backgroundColor: Colors.indigo600,
+    borderRadius: 30,
+    position: "absolute",
+    zIndex: 100,
+    top: 30,
+    left: 20,
   },
 });

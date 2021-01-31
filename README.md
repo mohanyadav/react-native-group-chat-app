@@ -43,6 +43,7 @@ Don't forget to add config.js to your .gitignore file
  - [ ] Accept/Reject friend requests
  - [ ] Limit to friend requests/day
  - [ ] Add Dark Mode
+ - [x] Add Forgot Password
 
 License
 ----
