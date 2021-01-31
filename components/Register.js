@@ -1,6 +1,15 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { Button, TextInput, Colors, FAB } from "react-native-paper";
+import {
+  Button,
+  TextInput,
+  Colors,
+  FAB,
+  Provider as PaperProvider,
+  ActivityIndicator,
+  Portal,
+  Dialog,
+} from "react-native-paper";
 
 import * as firebase from "firebase";
 import * as Device from "expo-device";
@@ -11,6 +20,7 @@ export default class Register extends Component {
     this.state = {
       email: null,
       password: null,
+      loading: false,
     };
   }
 
@@ -37,6 +47,7 @@ export default class Register extends Component {
 
   register = () => {
     const { email, password } = this.state;
+    this.setState({ loading: true });
 
     firebase
       .auth()
@@ -47,47 +58,64 @@ export default class Register extends Component {
       })
       .catch((error) => {
         alert(error.message);
+        this.setState({ loading: false });
       });
   };
 
   render() {
     return (
-      <View style={styles.container}>
-        <FAB
-          style={styles.backBtn}
-          icon="arrow-left"
-          onPress={() => this.props.navigation.goBack()}
-        ></FAB>
+      <PaperProvider>
+        <Portal>
+          <Dialog visible={this.state.loading} dismissable={false}>
+            <Dialog.Title>Signing you up...</Dialog.Title>
+            <Dialog.Content>
+              <ActivityIndicator
+                size={60}
+                animating={true}
+                hidesWhenStopped={true}
+                color="#6200EE"
+              />
+            </Dialog.Content>
+          </Dialog>
+        </Portal>
 
-        <Text style={styles.title}> Register </Text>
+        <View style={styles.container}>
+          <FAB
+            style={styles.backBtn}
+            icon="arrow-left"
+            onPress={() => this.props.navigation.goBack()}
+          ></FAB>
 
-        <TextInput
-          style={styles.textInput}
-          placeholder="Email"
-          value={this.state.email}
-          onChangeText={(email) => {
-            this.setState({ email });
-          }}
-        />
+          <Text style={styles.title}> Register </Text>
 
-        <TextInput
-          style={styles.textInput}
-          placeholder="Password"
-          value={this.state.password}
-          onChangeText={(password) => {
-            this.setState({ password });
-          }}
-        />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Email"
+            value={this.state.email}
+            onChangeText={(email) => {
+              this.setState({ email });
+            }}
+          />
 
-        <Button
-          mode="contained"
-          onPress={() => {
-            this.register();
-          }}
-        >
-          Register Now
-        </Button>
-      </View>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Password"
+            value={this.state.password}
+            onChangeText={(password) => {
+              this.setState({ password });
+            }}
+          />
+
+          <Button
+            mode="contained"
+            onPress={() => {
+              this.register();
+            }}
+          >
+            Register Now
+          </Button>
+        </View>
+      </PaperProvider>
     );
   }
 }
